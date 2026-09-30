@@ -7,6 +7,7 @@ import NotFound from './pages/NotFound'
 import { DSA_EXTERNAL_URL, RESUME_DRIVE_URL } from './constants/urls'
 import Blog from './pages/Blog'
 import BlogReader from './pages/BlogReader'
+import BlogTag from './pages/BlogTag'
 
 /**
  * Scroll to hash target when navigating within the SPA.
@@ -76,6 +77,7 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:entrySlug" element={<BlogReader />} />
           <Route path="/blog/:entrySlug/:postSlug" element={<BlogReader />} />
+          <Route path="/tags/:tagSlug" element={<BlogTag />} />
           <Route path="/resume" element={<RedirectToResume />} />
           <Route path="/dsa" element={<RedirectToDsa />} />
           <Route path="*" element={<NotFound />} />

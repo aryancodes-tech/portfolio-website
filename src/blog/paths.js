@@ -1,4 +1,4 @@
-import { BLOG_PATH } from '../constants/urls'
+import { BLOG_PATH } from '../constants/urls.js'
 
 /**
  * Build an in-app URL for a blog entry or post.

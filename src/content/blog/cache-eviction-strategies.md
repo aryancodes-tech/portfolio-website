@@ -1,8 +1,16 @@
 ---
 title: "Cache Eviction Strategies Explained: LRU, LFU, FIFO and Beyond"
 description: "Cache eviction strategies for production: LRU, LFU, FIFO, TTL, ARC, and all 8 Redis policies. Algorithms, dry runs, and frameworks to protect your cache hit ratio."
-date: "2026-06-04"
+excerpt: "A production guide to cache eviction — LRU, LFU, FIFO, TTL, ARC, and Redis maxmemory policies with algorithms, dry runs, and hit-ratio frameworks."
+slug: cache-eviction-strategies
+publishedAt: "2026-06-04"
+updatedAt: "2026-06-04"
+author: "Aryan Gupta"
 tags: [caching, redis, distributed-systems, backend, performance]
+category: caching
+coverImage: ""
+featured: true
+draft: false
 ---
 
 <!-- Meta: Cache eviction strategies for production: LRU, LFU, FIFO, TTL, ARC, and all 8 Redis policies. Algorithms, dry runs, and frameworks to protect your cache hit ratio. -->

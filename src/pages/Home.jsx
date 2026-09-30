@@ -1,6 +1,10 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useMemo } from 'react'
 import Navbar from "../components/Navbar"
 import HeroSection from "../components/HeroSection"
+import BlogFeaturedPost from '../components/blog/BlogFeaturedPost'
+import BlogLatestPosts from '../components/blog/BlogLatestPosts'
+import { loadBlogContent } from '../blog/content'
+import { getFeaturedPost, getLatestPosts } from '../blog/navigation'
 
 const Education = lazy(() => import("../components/Education"))
 const Experience = lazy(() => import("../components/Experience"))
@@ -18,6 +22,11 @@ const SectionFallback = () => (
 )
 
 const Home = () => {
+  const { docs, posts } = useMemo(() => loadBlogContent(), [])
+  const latestPosts = useMemo(() => getLatestPosts(posts, 3), [posts])
+  const featuredPost = useMemo(() => getFeaturedPost(docs, posts), [docs, posts])
+  const hasBlogPosts = posts.length > 0
+
   return (
     <main
       className="content site-shell pb-16"
@@ -26,6 +35,19 @@ const Home = () => {
     >
       <Navbar />
       <HeroSection />
+
+      {hasBlogPosts && (
+        <section className="px-1 pt-6 sm:px-2" aria-label="Latest from the blog">
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-2">
+            <div className="surface-card rounded-[2rem] border-2 border-[hsl(var(--ink))] bg-[hsl(var(--surface))] p-6 sm:p-8">
+              <BlogFeaturedPost post={featuredPost} />
+            </div>
+            <div className="surface-card rounded-[2rem] border-2 border-[hsl(var(--ink))] bg-[hsl(var(--surface))] p-6 sm:p-8">
+              <BlogLatestPosts posts={latestPosts} compact />
+            </div>
+          </div>
+        </section>
+      )}
 
       <Suspense fallback={<SectionFallback />}>
         <Education />

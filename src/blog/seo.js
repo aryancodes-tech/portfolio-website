@@ -1,33 +1,25 @@
 import {
-  BLOG_INDEX_META_DESCRIPTION,
-  BLOG_INDEX_META_TITLE,
-  BLOG_POST_TITLE_SUFFIX,
-} from '../constants/copy'
-import {
   META_DESCRIPTION,
   META_TITLE,
   OG_DESCRIPTION,
   OG_IMAGE_URL,
   OG_SITE_NAME,
   OG_TITLE,
-  PERSON_NAME,
   SITE_PATH,
   SITE_URL,
 } from '../constants/seo'
-import { BLOG_PATH } from '../constants/urls'
-import { blogPostHref } from './paths'
-
-/** @type {string} */
-const BLOG_JSON_LD_ID = 'blog-posting-jsonld'
+import {
+  buildBlogIndexMetadata,
+  buildBlogPostMetadata,
+  buildTagPageMetadata,
+} from './metadata'
 
 /**
- * @typedef {object} PageSeoConfig
- * @property {string} title Document title.
- * @property {string} description Meta description.
- * @property {string} canonicalUrl Absolute canonical URL.
- * @property {'website' | 'article' | 'profile'} ogType Open Graph type.
- * @property {object} [jsonLd] Optional JSON-LD object for blog posts.
+ * @typedef {import('./metadata').PageMetadata} PageSeoConfig
  */
+
+/** @type {string} */
+const BLOG_JSON_LD_PREFIX = 'blog-jsonld-'
 
 /**
  * @param {string} name
@@ -86,10 +78,10 @@ function setJsonLd(id, data) {
 }
 
 /**
- * @param {string} id
+ * Remove all blog JSON-LD script tags.
  */
-function removeJsonLd(id) {
-  document.getElementById(id)?.remove()
+function removeBlogJsonLd() {
+  document.querySelectorAll(`script[id^="${BLOG_JSON_LD_PREFIX}"]`).forEach((el) => el.remove())
 }
 
 /**
@@ -101,12 +93,7 @@ function removeJsonLd(id) {
  * @returns {PageSeoConfig}
  */
 export function buildBlogIndexSeo() {
-  return {
-    title: BLOG_INDEX_META_TITLE,
-    description: BLOG_INDEX_META_DESCRIPTION,
-    canonicalUrl: `${SITE_URL}${BLOG_PATH}`,
-    ogType: 'website',
-  }
+  return buildBlogIndexMetadata()
 }
 
 /**
@@ -118,56 +105,18 @@ export function buildBlogIndexSeo() {
  * @returns {PageSeoConfig}
  */
 export function buildBlogPostSeo(doc, entrySlug, postSlug) {
-  const title = doc.frontmatter.title ?? ''
-  const description = doc.frontmatter.description ?? ''
-  const path = blogPostHref(entrySlug, postSlug)
-  const canonicalUrl = `${SITE_URL}${path}`
-
-  return {
-    title: title.length > 0 ? `${title}${BLOG_POST_TITLE_SUFFIX}` : BLOG_INDEX_META_TITLE,
-    description: description.length > 0 ? description : BLOG_INDEX_META_DESCRIPTION,
-    canonicalUrl,
-    ogType: 'article',
-    jsonLd: buildBlogPostingSchema(doc, canonicalUrl),
-  }
+  return buildBlogPostMetadata(doc, entrySlug, postSlug)
 }
 
 /**
- * @param {BlogDoc} doc
- * @param {string} canonicalUrl
- * @returns {object}
+ * Build SEO config for a tag archive page.
+ *
+ * @param {string} tagLabel
+ * @param {string} tagSlug
+ * @returns {PageSeoConfig}
  */
-export function buildBlogPostingSchema(doc, canonicalUrl) {
-  const title = doc.frontmatter.title ?? ''
-  const description = doc.frontmatter.description ?? ''
-  const datePublished = doc.frontmatter.date ?? ''
-  const tags = doc.frontmatter.tags ?? []
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: title,
-    description,
-    datePublished: datePublished.length > 0 ? datePublished : undefined,
-    author: {
-      '@type': 'Person',
-      name: PERSON_NAME,
-      url: `${SITE_URL}${SITE_PATH}`,
-    },
-    publisher: {
-      '@type': 'Person',
-      name: PERSON_NAME,
-      url: `${SITE_URL}${SITE_PATH}`,
-    },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': canonicalUrl,
-    },
-    url: canonicalUrl,
-    inLanguage: 'en-IN',
-    image: OG_IMAGE_URL,
-    keywords: tags.length > 0 ? tags.join(', ') : undefined,
-  }
+export function buildTagPageSeo(tagLabel, tagSlug) {
+  return buildTagPageMetadata(tagLabel, tagSlug)
 }
 
 /**
@@ -179,24 +128,26 @@ export function applyPageSeo(config) {
   document.title = config.title
 
   getOrCreateMetaByName('description').setAttribute('content', config.description)
+  getOrCreateMetaByName('robots').setAttribute('content', config.robots)
+
   getOrCreateMetaByProperty('og:title').setAttribute('content', config.title)
   getOrCreateMetaByProperty('og:description').setAttribute('content', config.description)
   getOrCreateMetaByProperty('og:url').setAttribute('content', config.canonicalUrl)
   getOrCreateMetaByProperty('og:type').setAttribute('content', config.ogType)
   getOrCreateMetaByProperty('og:site_name').setAttribute('content', OG_SITE_NAME)
-  getOrCreateMetaByProperty('og:image').setAttribute('content', OG_IMAGE_URL)
+  getOrCreateMetaByProperty('og:image').setAttribute('content', config.ogImage)
 
+  getOrCreateMetaByName('twitter:card').setAttribute('content', 'summary_large_image')
   getOrCreateMetaByName('twitter:title').setAttribute('content', config.title)
   getOrCreateMetaByName('twitter:description').setAttribute('content', config.description)
-  getOrCreateMetaByName('twitter:image').setAttribute('content', OG_IMAGE_URL)
+  getOrCreateMetaByName('twitter:image').setAttribute('content', config.ogImage)
 
   getOrCreateCanonicalLink().setAttribute('href', config.canonicalUrl)
 
-  if (config.jsonLd) {
-    setJsonLd(BLOG_JSON_LD_ID, config.jsonLd)
-  } else {
-    removeJsonLd(BLOG_JSON_LD_ID)
-  }
+  removeBlogJsonLd()
+  config.jsonLd.forEach((schema, index) => {
+    setJsonLd(`${BLOG_JSON_LD_PREFIX}${index}`, schema)
+  })
 }
 
 /**
@@ -207,12 +158,18 @@ export function restoreDefaultPageSeo() {
 
   document.title = META_TITLE
   getOrCreateMetaByName('description').setAttribute('content', META_DESCRIPTION)
+  getOrCreateMetaByName('robots').setAttribute('content', 'index, follow, max-image-preview:large')
   getOrCreateMetaByProperty('og:title').setAttribute('content', OG_TITLE)
   getOrCreateMetaByProperty('og:description').setAttribute('content', OG_DESCRIPTION)
   getOrCreateMetaByProperty('og:url').setAttribute('content', canonicalUrl)
   getOrCreateMetaByProperty('og:type').setAttribute('content', 'profile')
+  getOrCreateMetaByProperty('og:image').setAttribute('content', OG_IMAGE_URL)
   getOrCreateMetaByName('twitter:title').setAttribute('content', OG_TITLE)
   getOrCreateMetaByName('twitter:description').setAttribute('content', OG_DESCRIPTION)
+  getOrCreateMetaByName('twitter:image').setAttribute('content', OG_IMAGE_URL)
   getOrCreateCanonicalLink().setAttribute('href', canonicalUrl)
-  removeJsonLd(BLOG_JSON_LD_ID)
+  removeBlogJsonLd()
 }
+
+// Re-export for consumers that still import schema builders.
+export { buildBlogPostingSchema, buildPostStructuredData } from './structured-data'

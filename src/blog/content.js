@@ -1,14 +1,11 @@
 import DOMPurify from 'dompurify'
-import { marked } from 'marked'
 import { BLOG_MANIFEST } from '../constants/blog.manifest'
 import { applyBlogPinning } from './applyPinning'
+import { parseFrontmatter } from './frontmatter'
+import { renderMarkdownHtml } from './markdown'
 
 /**
- * @typedef {object} BlogFrontmatter
- * @property {string} [title]
- * @property {string} [description]
- * @property {string} [date]
- * @property {readonly string[]} [tags]
+ * @typedef {import('./frontmatter').BlogFrontmatter} BlogFrontmatter
  */
 
 /**
@@ -28,6 +25,7 @@ import { applyBlogPinning } from './applyPinning'
  * @property {string} description
  * @property {string} dateISO
  * @property {readonly string[]} tags
+ * @property {string} [category]
  * @property {string} path
  */
 
@@ -38,7 +36,7 @@ import { applyBlogPinning } from './applyPinning'
  * @property {string} title
  * @property {readonly string[]} tags
  * @property {readonly BlogPostIndexItem[]} posts
- * @property {boolean} [pinned] When true, entry is pinned on the blog index.
+ * @property {boolean} [pinned]
  */
 
 /**
@@ -46,108 +44,14 @@ import { applyBlogPinning } from './applyPinning'
  * @property {'standalone'} type
  * @property {string} entrySlug
  * @property {BlogPostIndexItem} post
- * @property {boolean} [pinned] When true, entry is pinned on the blog index.
+ * @property {boolean} [pinned]
  */
 
 /**
  * @typedef {BlogSeriesIndexItem | BlogStandaloneIndexItem} BlogIndexItem
  */
 
-marked.setOptions({
-  gfm: true,
-  breaks: false,
-  mangle: false,
-  headerIds: false,
-})
-
-/**
- * Custom renderer to wrap fenced code blocks with a copy button.
- * The copy action is handled via event delegation in the BlogReader.
- */
-const blogRenderer = new marked.Renderer()
-
-/**
- * @param {string} code
- * @param {string} infostring
- * @returns {string}
- */
-blogRenderer.code = (code, infostring = '') => {
-  const language = (infostring || '').trim().split(/\s+/)[0]
-  const langClass = language.length > 0 ? `language-${escapeHtml(language)}` : ''
-  const safeCode = escapeHtml(extractCodeText(code))
-
-  return [
-    '<div class="blog-codeblock">',
-    '<button type="button" class="blog-codecopy" aria-label="Copy code">Copy</button>',
-    `<pre><code class="${langClass}">${safeCode}</code></pre>`,
-    '</div>',
-  ].join('')
-}
-
-marked.use({ renderer: blogRenderer })
-
-/**
- * Parse a simple YAML-like frontmatter block (no nesting).
- * Supported:
- * - title: string
- * - description: string
- * - date: 2026-06-02
- * - tags: [a, b, c]
- *
- * @param {string} raw
- * @returns {{ frontmatter: BlogFrontmatter, body: string }}
- */
-export function parseFrontmatter(raw) {
-  if (!raw.startsWith('---\n')) return { frontmatter: {}, body: raw }
-  const end = raw.indexOf('\n---\n', 4)
-  if (end === -1) return { frontmatter: {}, body: raw }
-
-  const fmText = raw.slice(4, end).trim()
-  const body = raw.slice(end + '\n---\n'.length)
-
-  /** @type {BlogFrontmatter} */
-  const frontmatter = {}
-  for (const line of fmText.split('\n')) {
-    const trimmed = line.trim()
-    if (trimmed.length === 0) continue
-    const idx = trimmed.indexOf(':')
-    if (idx === -1) continue
-    const key = trimmed.slice(0, idx).trim()
-    const value = trimmed.slice(idx + 1).trim()
-
-    if (key === 'title') frontmatter.title = stripQuotes(value)
-    if (key === 'description') frontmatter.description = stripQuotes(value)
-    if (key === 'date') frontmatter.date = stripQuotes(value)
-    if (key === 'tags') frontmatter.tags = parseTags(value)
-  }
-
-  return { frontmatter, body }
-}
-
-/**
- * @param {string} value
- * @returns {string}
- */
-function stripQuotes(value) {
-  const v = value.trim()
-  if (v.length >= 2 && ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")))) {
-    return v.slice(1, -1)
-  }
-  return v
-}
-
-/**
- * Parse tags formatted as `[a, b, c]`.
- * @param {string} value
- * @returns {readonly string[]}
- */
-function parseTags(value) {
-  const v = value.trim()
-  if (!v.startsWith('[') || !v.endsWith(']')) return []
-  const inner = v.slice(1, -1).trim()
-  if (inner.length === 0) return []
-  return inner.split(',').map((t) => stripQuotes(t.trim())).filter((t) => t.length > 0)
-}
+export { parseFrontmatter }
 
 /**
  * @param {BlogDoc} doc
@@ -156,8 +60,9 @@ function parseTags(value) {
 function toIndexPost(doc) {
   const title = doc.frontmatter.title ?? humanizeSlug(doc.postSlug)
   const description = doc.frontmatter.description ?? ''
-  const dateISO = doc.frontmatter.date ?? ''
+  const dateISO = doc.frontmatter.publishedAt ?? doc.frontmatter.date ?? ''
   const tags = doc.frontmatter.tags ?? []
+  const category = doc.frontmatter.category ?? ''
   return {
     entrySlug: doc.entrySlug,
     postSlug: doc.postSlug,
@@ -165,6 +70,7 @@ function toIndexPost(doc) {
     description,
     dateISO,
     tags,
+    category,
     path: doc.path,
   }
 }
@@ -181,9 +87,8 @@ function findDoc(docByKey, entrySlug, postSlug) {
 
 /**
  * Load markdown from `src/content/blog/`, then filter and order using `blog.manifest.js`.
- * Only slugs listed in the manifest are published; other files remain as drafts in the repo.
  *
- * @returns {{ items: readonly BlogIndexItem[], docs: readonly BlogDoc[] }}
+ * @returns {{ items: readonly BlogIndexItem[], docs: readonly BlogDoc[], posts: readonly BlogPostIndexItem[] }}
  */
 export function loadBlogContent() {
   /** @type {Record<string, string>} */
@@ -232,11 +137,7 @@ export function loadBlogContent() {
     if (!doc) continue
 
     publishedDocs.push(doc)
-    items.push({
-      type: 'standalone',
-      entrySlug,
-      post: toIndexPost(doc),
-    })
+    items.push({ type: 'standalone', entrySlug, post: toIndexPost(doc) })
   }
 
   for (const [entrySlug, postSlugs] of Object.entries(BLOG_MANIFEST.series)) {
@@ -265,20 +166,16 @@ export function loadBlogContent() {
   }
 
   const pinnedSlugs = BLOG_MANIFEST.pinned ?? []
+  const pinnedItems = applyBlogPinning(items, pinnedSlugs)
 
-  return {
-    items: applyBlogPinning(items, pinnedSlugs),
-    docs: publishedDocs,
+  /** @type {BlogPostIndexItem[]} */
+  const flatPosts = []
+  for (const item of pinnedItems) {
+    if (item.type === 'standalone') flatPosts.push(item.post)
+    else flatPosts.push(...item.posts)
   }
-}
 
-/**
- * Wrap GFM tables so wide layouts scroll horizontally on small screens.
- * @param {string} html
- * @returns {string}
- */
-function wrapBlogTables(html) {
-  return html.replace(/<table>/g, '<div class="blog-table-wrap"><table>').replace(/<\/table>/g, '</table></div>')
+  return { items: pinnedItems, docs: publishedDocs, posts: flatPosts }
 }
 
 /**
@@ -287,37 +184,7 @@ function wrapBlogTables(html) {
  * @returns {string}
  */
 export function renderMarkdown(markdown) {
-  const html = wrapBlogTables(marked.parse(markdown))
-  return DOMPurify.sanitize(html)
-}
-
-/**
- * Minimal HTML escaper for marked renderer output.
- * @param {string} input
- * @returns {string}
- */
-function escapeHtml(input) {
-  const text = String(input ?? '')
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
-
-/**
- * Marked may pass non-string values for code in some cases.
- * @param {unknown} value
- * @returns {string}
- */
-function extractCodeText(value) {
-  if (typeof value === 'string') return value
-  if (value && typeof value === 'object' && 'text' in value) {
-    const maybeText = /** @type {{ text?: unknown }} */ (value).text
-    if (typeof maybeText === 'string') return maybeText
-  }
-  return String(value ?? '')
+  return DOMPurify.sanitize(renderMarkdownHtml(markdown))
 }
 
 /**
@@ -341,7 +208,6 @@ function dedupeTags(tags) {
 
 /**
  * Resolve a markdown doc by entry + optional post slug.
- * - If `postSlug` is empty, returns the first post in a series (by date sort), or the standalone post.
  *
  * @param {readonly BlogDoc[]} docs
  * @param {string} entrySlug
@@ -362,6 +228,11 @@ export function resolveDoc(docs, entrySlug, postSlug) {
 
   return filtered
     .slice()
-    .sort((a, b) => (a.frontmatter.date ?? '').localeCompare(b.frontmatter.date ?? ''))[0] ?? null
+    .sort((a, b) =>
+      (a.frontmatter.publishedAt ?? a.frontmatter.date ?? '').localeCompare(
+        b.frontmatter.publishedAt ?? b.frontmatter.date ?? '',
+      ),
+    )[0] ?? null
 }
 
+export { filterPostsByTag, tagHref } from './tags'

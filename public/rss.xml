@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Engineering Blog | Aryan Gupta</title>
+    <link>https://www.aryancodes.tech/blog</link>
+    <description>Technical articles on backends, caching, distributed systems, and production engineering.</description>
+    <language>en-in</language>
+    <lastBuildDate>Sat, 13 Jun 2026 00:53:38 GMT</lastBuildDate>
+    <atom:link href="https://www.aryancodes.tech/rss.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Cache Eviction Strategies Explained: LRU, LFU, FIFO and Beyond</title>
+      <link>https://www.aryancodes.tech/blog/cache-eviction-strategies/cache-eviction-strategies</link>
+      <guid isPermaLink="true">https://www.aryancodes.tech/blog/cache-eviction-strategies/cache-eviction-strategies</guid>
+      <description>A production guide to cache eviction — LRU, LFU, FIFO, TTL, ARC, and Redis maxmemory policies with algorithms, dry runs, and hit-ratio frameworks.</description>
+      <pubDate>Thu, 04 Jun 2026 00:00:00 GMT</pubDate>
+      <author>Aryan Gupta</author>
+    </item>
+  </channel>
+</rss>

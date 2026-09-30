@@ -1,56 +1,17 @@
 #!/usr/bin/env node
 /**
- * Generates public/sitemap.xml from published blog manifest entries.
- * Aligns sitemap host with SITE_URL (canonical www).
+ * Generates public/sitemap.xml with blog posts, tag pages, lastmod, priority, and changefreq.
  */
-import { readFileSync, writeFileSync } from 'node:fs'
+import { writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { BLOG_MANIFEST } from '../src/constants/blog.manifest.js'
+import { loadBlogContentFromDisk, collectTagIndex } from '../src/blog/loadNode.js'
+import { blogPostHref } from '../src/blog/paths.js'
 import { SITE_URL } from '../src/constants/seo.js'
 import { BLOG_PATH } from '../src/constants/urls.js'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const contentRoot = join(root, 'src/content/blog')
-
-/**
- * @param {string} value
- * @returns {string}
- */
-function stripQuotes(value) {
-  const v = value.trim()
-  if (v.length >= 2 && ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")))) {
-    return v.slice(1, -1)
-  }
-  return v
-}
-
-/**
- * @param {string} filePath
- * @returns {string}
- */
-function readLastmodFromMarkdown(filePath) {
-  try {
-    const raw = readFileSync(filePath, 'utf8')
-    if (!raw.startsWith('---\n')) return ''
-    const end = raw.indexOf('\n---\n', 4)
-    if (end === -1) return ''
-
-    const fmText = raw.slice(4, end).trim()
-    for (const line of fmText.split('\n')) {
-      const trimmed = line.trim()
-      if (trimmed.length === 0) continue
-      const idx = trimmed.indexOf(':')
-      if (idx === -1) continue
-      const key = trimmed.slice(0, idx).trim()
-      const value = trimmed.slice(idx + 1).trim()
-      if (key === 'date') return stripQuotes(value)
-    }
-  } catch {
-    return ''
-  }
-  return ''
-}
 
 /**
  * @param {string} loc
@@ -60,10 +21,7 @@ function readLastmodFromMarkdown(filePath) {
  * @returns {string}
  */
 function formatUrlEntry(loc, lastmod = '', changefreq = 'monthly', priority = '0.7') {
-  const lines = [
-    '  <url>',
-    `    <loc>${loc}</loc>`,
-  ]
+  const lines = ['  <url>', `    <loc>${loc}</loc>`]
   if (lastmod.length > 0) lines.push(`    <lastmod>${lastmod}</lastmod>`)
   lines.push(`    <changefreq>${changefreq}</changefreq>`)
   lines.push(`    <priority>${priority}</priority>`)
@@ -71,65 +29,36 @@ function formatUrlEntry(loc, lastmod = '', changefreq = 'monthly', priority = '0
   return lines.join('\n')
 }
 
+const { docs, posts } = loadBlogContentFromDisk(contentRoot, { validate: false })
+
 /** @type {{ loc: string, lastmod: string, changefreq: string, priority: string }[]} */
 const entries = [
-  {
-    loc: `${SITE_URL}/`,
-    lastmod: '',
-    changefreq: 'weekly',
-    priority: '1.0',
-  },
-  {
-    loc: `${SITE_URL}${BLOG_PATH}`,
-    lastmod: '',
-    changefreq: 'weekly',
-    priority: '0.9',
-  },
+  { loc: `${SITE_URL}/`, lastmod: '', changefreq: 'weekly', priority: '1.0' },
+  { loc: `${SITE_URL}${BLOG_PATH}`, lastmod: '', changefreq: 'weekly', priority: '0.9' },
+  { loc: `${SITE_URL}/rss.xml`, lastmod: '', changefreq: 'daily', priority: '0.5' },
 ]
 
-for (const entrySlug of BLOG_MANIFEST.standalone) {
-  if (entrySlug.length === 0) continue
-  const filePath = join(contentRoot, `${entrySlug}.md`)
-  const lastmod = readLastmodFromMarkdown(filePath)
+for (const doc of docs) {
+  const lastmod = doc.frontmatter.updatedAt ?? doc.frontmatter.publishedAt ?? doc.frontmatter.date ?? ''
+  const path = blogPostHref(doc.entrySlug, doc.postSlug === doc.entrySlug ? '' : doc.postSlug)
   entries.push({
-    loc: `${SITE_URL}${BLOG_PATH}/${entrySlug}`,
+    loc: `${SITE_URL}${path}`,
     lastmod,
     changefreq: 'monthly',
-    priority: '0.8',
+    priority: doc.frontmatter.featured ? '0.85' : '0.8',
   })
 }
 
-for (const [entrySlug, postSlugs] of Object.entries(BLOG_MANIFEST.series)) {
-  if (entrySlug.length === 0) continue
-
-  let seriesLastmod = ''
-  for (const postSlug of postSlugs) {
-    if (postSlug.length === 0) continue
-    const filePath = join(contentRoot, entrySlug, `${postSlug}.md`)
-    const lastmod = readLastmodFromMarkdown(filePath)
-    if (lastmod.length > 0 && (seriesLastmod.length === 0 || lastmod > seriesLastmod)) {
-      seriesLastmod = lastmod
-    }
-
-    entries.push({
-      loc: `${SITE_URL}${BLOG_PATH}/${entrySlug}/${postSlug}`,
-      lastmod,
-      changefreq: 'monthly',
-      priority: '0.8',
-    })
-  }
-
-  if (postSlugs.length > 0) {
-    entries.push({
-      loc: `${SITE_URL}${BLOG_PATH}/${entrySlug}`,
-      lastmod: seriesLastmod,
-      changefreq: 'monthly',
-      priority: '0.75',
-    })
-  }
+for (const tag of collectTagIndex(posts)) {
+  entries.push({
+    loc: `${SITE_URL}/tags/${tag.slug}`,
+    lastmod: '',
+    changefreq: 'weekly',
+    priority: '0.7',
+  })
 }
 
-const body = entries.map((entry) => formatUrlEntry(entry.loc, entry.lastmod, entry.changefreq, entry.priority)).join('\n')
+const body = entries.map((e) => formatUrlEntry(e.loc, e.lastmod, e.changefreq, e.priority)).join('\n')
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

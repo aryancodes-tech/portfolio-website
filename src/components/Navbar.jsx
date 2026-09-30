@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import { BLOG_PATH, HOME_PATH } from '../constants/urls'
+import { useBlogNavAutoHide, useIsBlogReaderRoute } from '../hooks/useBlogNavAutoHide'
 
 /** Primary in-page nav targets (crawlable hash links). */
 const NAV_LINKS = [
@@ -53,6 +54,8 @@ const Navbar = () => {
   const desktopNavLinks = NAV_LINKS.filter((link) => !link.isCta)
   const contactLink = NAV_LINKS.find((link) => link.isCta)
   const isHomeRoute = location.pathname === HOME_PATH
+  const isBlogReader = useIsBlogReaderRoute()
+  const navHidden = useBlogNavAutoHide(isBlogReader)
 
   /**
    * For hash links, ensure we always target the home route.
@@ -68,7 +71,16 @@ const Navbar = () => {
   }
 
   return (
-    <header className="sticky top-0 z-50 px-3 pt-4 pb-2 sm:px-5 animate-[nav-in_0.4s_ease-out]">
+    <header
+      className={[
+        'sticky top-0 z-50 px-3 pt-4 pb-2 sm:px-5',
+        'transition-transform duration-300 ease-out',
+        isBlogReader && navHidden ? '-translate-y-full' : 'translate-y-0',
+        !isBlogReader ? 'animate-[nav-in_0.4s_ease-out]' : '',
+      ]
+        .filter((c) => c.length > 0)
+        .join(' ')}
+    >
       <div className="content flex flex-row items-center justify-between gap-4 rounded-2xl border-2 border-[hsl(var(--ink))] bg-[hsl(var(--surface))]/95 px-4 py-3 shadow-[6px_6px_0_hsl(var(--signal)/0.25)] backdrop-blur-md md:px-6">
         <Link
           to={HOME_PATH}

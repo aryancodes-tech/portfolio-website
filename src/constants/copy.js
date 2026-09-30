@@ -139,6 +139,60 @@ export const BLOG_NOT_FOUND_HOME_LABEL = 'Home'
 export const BLOG_READER_BACK_LABEL = '← Back to blog'
 
 /**
+ * Label for the back link on tag archive pages.
+ * @type {string}
+ */
+export const BLOG_TAG_BACK_LABEL = '← Back to blog'
+
+/**
+ * Title when a tag archive has no posts.
+ * @type {string}
+ */
+export const BLOG_TAG_EMPTY_TITLE = 'No articles for this tag'
+
+/**
+ * Description when a tag archive has no posts.
+ * @type {string}
+ */
+export const BLOG_TAG_EMPTY_DESCRIPTION = 'Try browsing the full blog index.'
+
+/**
+ * Section title for related article recommendations.
+ * @type {string}
+ */
+export const BLOG_RELATED_TITLE = 'Related reading'
+
+/**
+ * Kicker for previous post navigation.
+ * @type {string}
+ */
+export const BLOG_NAV_PREV_LABEL = 'Previous'
+
+/**
+ * Kicker for next post navigation.
+ * @type {string}
+ */
+export const BLOG_NAV_NEXT_LABEL = 'Next'
+
+/**
+ * Section title for latest articles.
+ * @type {string}
+ */
+export const BLOG_LATEST_TITLE = 'Latest articles'
+
+/**
+ * Section title for popular tags.
+ * @type {string}
+ */
+export const BLOG_TAGS_TITLE = 'Popular tags'
+
+/**
+ * Kicker for featured article highlight.
+ * @type {string}
+ */
+export const BLOG_FEATURED_TITLE = 'Featured'
+
+/**
  * Supporting helper text for the hero blog CTA.
  * @type {string}
  */

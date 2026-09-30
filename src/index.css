@@ -162,7 +162,7 @@ html {
   .blog-prose h2,
   .blog-prose h3,
   .blog-prose h4 {
-    @apply text-[hsl(var(--ink))] tracking-tight;
+    @apply text-[hsl(var(--ink))] tracking-tight scroll-mt-24;
   }
 
   .blog-prose h2 {
@@ -171,6 +171,18 @@ html {
 
   .blog-prose h3 {
     @apply mt-7 text-xl font-semibold sm:text-2xl;
+  }
+
+  .blog-prose h4 {
+    @apply mt-6 text-lg font-semibold sm:text-xl;
+  }
+
+  .blog-heading-num {
+    @apply mr-2 inline-block min-w-[2.25rem] font-mono text-sm font-semibold text-[hsl(var(--signal-deep))] tabular-nums;
+  }
+
+  .blog-heading-text {
+    @apply inline;
   }
 
   .blog-prose p {
@@ -284,6 +296,144 @@ html {
 
   .blog-codeblock .blog-codecopy:active {
     transform: translateY(1px);
+  }
+
+  .blog-toc-aside {
+    position: sticky;
+    top: var(--blog-nav-offset, 7.5rem);
+    align-self: start;
+    max-height: calc(100vh - var(--blog-nav-offset, 7.5rem) - 1.5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    transition: top 0.3s ease;
+  }
+
+  .blog-toc {
+    @apply rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--paper))] p-4;
+  }
+
+  .blog-toc-label {
+    @apply px-1 font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-[hsl(var(--muted-foreground))];
+  }
+
+  .blog-toc-list {
+    @apply mt-3 flex list-none flex-col gap-1 p-0;
+  }
+
+  .blog-toc-item {
+    @apply list-none rounded-lg border-l-[3px] border-transparent transition-colors;
+  }
+
+  .blog-toc-link {
+    @apply flex items-start gap-2 rounded-lg px-2 py-2 no-underline transition-colors hover:bg-[hsl(var(--surface))];
+  }
+
+  .blog-toc-number {
+    @apply shrink-0 font-mono text-[11px] font-semibold tabular-nums text-[hsl(var(--muted-foreground))];
+    min-width: 2rem;
+  }
+
+  .blog-toc-text {
+    @apply text-sm leading-snug text-[hsl(var(--muted-foreground))];
+  }
+
+  .blog-toc-active {
+    @apply border-[hsl(var(--signal-deep))] bg-[hsl(var(--signal)/0.08)];
+  }
+
+  .blog-toc-active .blog-toc-number {
+    @apply text-[hsl(var(--signal-deep))];
+  }
+
+  .blog-toc-active .blog-toc-text {
+    @apply font-semibold text-[hsl(var(--ink))];
+  }
+
+  .blog-toc-depth-2 .blog-toc-number {
+    min-width: 2.5rem;
+  }
+
+  .blog-toc-depth-2 {
+    @apply pl-2;
+  }
+
+  .blog-toc-depth-3 {
+    @apply pl-5;
+  }
+
+  .blog-toc-depth-3 .blog-toc-number {
+    min-width: 3rem;
+  }
+
+  .blog-post-nav {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+  }
+
+  .blog-post-nav-link {
+    @apply block rounded-2xl border border-[hsl(var(--border))] p-4 transition hover:border-[hsl(var(--ink))];
+  }
+
+  .blog-post-nav-kicker {
+    @apply font-mono text-[11px] uppercase tracking-[0.2em] text-[hsl(var(--muted-foreground))];
+  }
+
+  .blog-post-nav-title {
+    @apply mt-1 block text-base font-semibold text-[hsl(var(--ink))];
+  }
+
+  .blog-related-title,
+  .blog-latest-title,
+  .blog-tag-cloud-title {
+    @apply text-lg font-bold text-[hsl(var(--ink))];
+  }
+
+  .blog-related-list,
+  .blog-latest-list {
+    @apply mt-4 flex flex-col gap-3;
+  }
+
+  .blog-related-link,
+  .blog-latest-link {
+    @apply block rounded-xl border border-[hsl(var(--border))] p-4 transition hover:border-[hsl(var(--ink))];
+  }
+
+  .blog-related-link-title,
+  .blog-latest-link-title {
+    @apply block font-semibold text-[hsl(var(--ink))];
+  }
+
+  .blog-related-link-desc,
+  .blog-latest-link-desc {
+    @apply mt-1 block text-sm text-[hsl(var(--muted-foreground))];
+  }
+
+  .blog-latest-date {
+    @apply mt-2 block font-mono text-xs text-[hsl(var(--muted-foreground))];
+  }
+
+  .blog-tag-cloud-list {
+    @apply mt-4 flex flex-wrap gap-2;
+  }
+
+  .blog-tag-cloud-chip {
+    @apply inline-flex items-center gap-2 no-underline;
+  }
+
+  .blog-tag-count {
+    @apply font-mono text-[10px] opacity-70;
+  }
+
+  .blog-featured-kicker {
+    @apply font-mono text-[11px] uppercase tracking-[0.25em] text-[hsl(var(--muted-foreground))];
+  }
+
+  .blog-featured-title {
+    @apply mt-2 text-2xl font-bold text-[hsl(var(--ink))];
+  }
+
+  .blog-featured-desc {
+    @apply mt-3 text-base text-[hsl(var(--muted-foreground))];
   }
 }
 
