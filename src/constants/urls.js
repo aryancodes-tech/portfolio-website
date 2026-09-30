@@ -22,3 +22,10 @@ export const DSA_EXTERNAL_URL = 'https://dsa.aryancodes.tech'
  */
 export const RESUME_DRIVE_URL =
   'https://drive.google.com/file/d/153sh7wGFxuyM1DWVxYKdRMUe659IZfxm/view?usp=sharing'
+
+/**
+ * In-app path for the notes index. Routed, and omitted from the header
+ * while `SHOW_WRITING_LINK` is false.
+ * @type {string}
+ */
+export const WRITING_PATH = '/writing'

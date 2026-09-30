@@ -13,9 +13,9 @@ alwaysApply: false
 
 ## Design language (do not change without explicit request)
 
-- **Colors:** HSL CSS variables in [src/index.css](src/index.css) — `--ink`, `--paper`, `--surface`, `--signal`, `--signal-deep`, `--muted`, etc. Use `hsl(var(--token))` in Tailwind arbitrary values.
+- **Colors:** Dark by default, with a light scheme. HSL tokens in [src/index.css](src/index.css). Theme class is `.dark` on `<html>`. Use `hsl(var(--token))`.
 - **Typography:** Body = Gilroy; headings (`font-display`) = Syne; labels/mono = IBM Plex Mono. Fonts are **self-hosted only** — see [src/styles/fonts.css](src/styles/fonts.css). Never add Google Fonts CDN.
-- **Layout:** `content` and `site-shell` wrappers; sections use `surface-card`, `border-2`, offset shadows (`shadow-[6px_6px_0_...]`).
+- **Layout:** Lined `page-rail` column (`max-w-[46rem]`) with left/right hairlines. Cover + overlapping portrait, then about, contact, work, stack, project cards. Work rows are `<details>`. Education and achievements stay closed. Notes live at `/writing` and stay out of the header while `SHOW_WRITING_LINK` is false.
 - **Copy & placement:** Do not change visible text, section order, or spacing unless the user asks.
 
 ## Constants-first

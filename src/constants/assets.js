@@ -14,3 +14,8 @@ export const LOGO_OMNIFUL_WEBP = '/omniful.webp'
 export const LOGO_OMNIFUL_PNG = '/omniful.png'
 export const LOGO_BEZTLABS_WEBP = '/beztlabs.webp'
 export const LOGO_BEZTLABS_JPEG = '/beztlabs.jpeg'
+
+/** Project card covers. */
+export const PROJECT_IMAGE_MYMEMOS = '/project_images/mymemos.svg'
+export const PROJECT_IMAGE_PLACEMENTBUDDY = '/project_images/placementbuddy.jpg'
+export const PROJECT_IMAGE_WIDGETWALL = '/project_images/widgetwall.jpg'

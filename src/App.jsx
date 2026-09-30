@@ -4,7 +4,8 @@ import { Analytics } from '@vercel/analytics/react'
 import './App.css'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
-import { DSA_EXTERNAL_URL, RESUME_DRIVE_URL } from './constants/urls'
+import Writing, { WritingPost } from './pages/Writing'
+import { DSA_EXTERNAL_URL, RESUME_DRIVE_URL, WRITING_PATH } from './constants/urls'
 
 /** Sends the browser to the public resume PDF on Google Drive. */
 function RedirectToResume() {
@@ -34,6 +35,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/resume" element={<RedirectToResume />} />
           <Route path="/dsa" element={<RedirectToDsa />} />
+          <Route path={WRITING_PATH} element={<Writing />} />
+          <Route path={`${WRITING_PATH}/:slug`} element={<WritingPost />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

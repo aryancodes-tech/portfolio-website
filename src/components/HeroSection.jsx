@@ -1,78 +1,123 @@
-import { FolderOpenDot } from "lucide-react"
-import { HERO_KICKER, PROFILE_IMAGE_ALT, SITE_URL } from '../constants/seo'
+import { FaGithub, FaXTwitter, FaLinkedinIn } from 'react-icons/fa6'
+import { Mail } from 'lucide-react'
+import {
+  CONTACT_EMAIL,
+  PERSON_NAME,
+  PROFILE_IMAGE_ALT,
+  SOCIAL_PROFILES,
+} from '../constants/seo'
 import { HERO_PHOTO_WEBP, HERO_PHOTO_WEBP_SM } from '../constants/assets'
-import { RESUME_PATH } from '../constants/urls'
+import { experiences } from '../constants/data/experience'
+import { describeTenure } from '../constants/data/tenure'
+import {
+  ABOUT_TITLE,
+  CONNECT_TITLE,
+  EMAIL_LABEL,
+  HERO_ABOUT,
+  HERO_ROLE,
+  HERO_STATUS,
+  TENURE_FULL_TIME_LABEL,
+  TENURE_WITH_INTERNSHIPS_LABEL,
+} from '../constants/copy'
+import SectionLabel from './SectionLabel'
+
+const SOCIAL_ICONS = {
+  github: FaGithub,
+  linkedin: FaLinkedinIn,
+  x: FaXTwitter,
+}
 
 /**
- * Full-width hero with asymmetric layout and blueprint-style grid (no canvas snow).
- * LCP image uses WebP; animations avoided on above-the-fold content for performance.
+ * Cover, overlapping portrait, about bullets, tenure, and contact chips.
+ * Mirrors the profile block the reference sites use, without copying any one of them.
  */
 const HeroSection = () => {
+  const tenure = describeTenure(experiences)
+
   return (
-    <div className="w-full px-1 sm:px-2 pt-8 pb-2">
-      <section
-        className="surface-card relative overflow-hidden rounded-[2rem] border-2 border-[hsl(var(--ink))] bg-[hsl(var(--surface))] p-6 sm:p-10 md:p-14 lg:p-16"
-        aria-label="Aryan Gupta — Backend Developer and Software Engineer"
-      >
-        <div className="hero-grid-bg pointer-events-none absolute inset-0 opacity-[0.65]" aria-hidden />
-        <div className="absolute -right-24 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-[hsl(var(--signal)/0.12)] blur-3xl" aria-hidden />
-        <div className="absolute -left-16 bottom-0 h-48 w-48 rounded-full bg-[hsl(200_40%_50%/0.08)] blur-3xl" aria-hidden />
+    <section id="top" aria-label={`${PERSON_NAME}, ${HERO_ROLE}`}>
+      <div className="hero-banner relative h-40 overflow-hidden sm:h-48" aria-hidden>
+        <svg className="absolute inset-0 h-full w-full text-[hsl(var(--ink)/0.35)]" viewBox="0 0 720 192" preserveAspectRatio="xMidYMid slice">
+          <circle cx="168" cy="132" r="7" fill="currentColor" />
+          <circle cx="318" cy="58" r="7" fill="currentColor" />
+          <circle cx="486" cy="104" r="7" fill="currentColor" />
+          <path d="M175 126 311 64M325 62 479 100" stroke="currentColor" strokeWidth="1.5" fill="none" />
+        </svg>
+      </div>
 
-        <div className="relative grid gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-center">
-          <div className="flex flex-col gap-6 lg:gap-8">
-            <p className="hidden font-mono text-[11px] tracking-[0.4em] text-[hsl(var(--signal-deep))] uppercase md:block">
-              {HERO_KICKER}
-            </p>
-            <h1 className="font-display text-[clamp(2.1rem,5vw,4.25rem)] font-extrabold leading-[1.05] tracking-tight text-[hsl(var(--ink))]">
-              Aryan Gupta
-            </h1>
+      <div className="pad relative z-10">
+        <img
+          src={HERO_PHOTO_WEBP_SM}
+          srcSet={`${HERO_PHOTO_WEBP_SM} 320w, ${HERO_PHOTO_WEBP} 560w`}
+          sizes="88px"
+          alt={PROFILE_IMAGE_ALT}
+          width={88}
+          height={88}
+          decoding="async"
+          fetchPriority="high"
+          className="-mt-10 h-[4.5rem] w-[4.5rem] rounded-full object-cover ring-4 ring-[hsl(var(--paper))] sm:-mt-12 sm:h-[5.5rem] sm:w-[5.5rem]"
+        />
+        <h1 className="mt-5 font-display text-[1.65rem] font-semibold leading-none tracking-tight text-[hsl(var(--ink))] sm:text-[1.85rem]">
+          {PERSON_NAME}
+        </h1>
+        <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13.5px] text-[hsl(var(--muted-foreground))]">
+          {HERO_ROLE}
+          <span className="inline-flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--signal))]" aria-hidden />
+            {HERO_STATUS}
+          </span>
+        </p>
 
-            <p className="max-w-xl font-['Gilroy'] text-lg leading-relaxed text-[hsl(var(--muted-foreground))] sm:text-xl">
-              Backend engineer focused on{' '}
-              <span className="text-[hsl(var(--ink))]">scalable APIs</span>, microservices, and{' '}
-              <span className="text-[hsl(var(--ink))]">distributed systems</span> — from PostgreSQL internals to warehouse-scale workflows.
-            </p>
+        <ul className="mt-6 flex flex-wrap gap-2" aria-label="Experience length">
+          <li className="chip">
+            <span className="text-[hsl(var(--ink))]">{tenure.fullTime}</span>
+            <span>{TENURE_FULL_TIME_LABEL}</span>
+          </li>
+          <li className="chip">
+            <span className="text-[hsl(var(--ink))]">{tenure.withInternships}</span>
+            <span>{TENURE_WITH_INTERNSHIPS_LABEL}</span>
+          </li>
+        </ul>
+      </div>
 
-            <div className="flex flex-col items-stretch gap-3 pt-2 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="rule pad mt-8 py-8">
+        <SectionLabel id="about-heading">{ABOUT_TITLE}</SectionLabel>
+        <ul className="mt-5 space-y-3 text-[hsl(var(--muted-foreground))]">
+          {HERO_ABOUT.map((line) => (
+            <li key={line} className="flex gap-3">
+              <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[hsl(var(--ink))]" aria-hidden />
+              <span>{line}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="rule pad py-8">
+        <SectionLabel id="connect-heading">{CONNECT_TITLE}</SectionLabel>
+        <div className="mt-5 flex flex-wrap gap-2">
+          {SOCIAL_PROFILES.map((profile) => {
+            const Icon = SOCIAL_ICONS[profile.id]
+            return (
               <a
-                href={`${SITE_URL}${RESUME_PATH}`}
+                key={profile.id}
+                href={profile.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(var(--ink))] px-5 py-3 font-mono text-sm font-semibold uppercase tracking-wider text-[hsl(var(--surface))] shadow-[5px_5px_0_hsl(var(--signal))] transition-transform hover:-translate-y-0.5 sm:w-auto sm:justify-start"
+                aria-label={profile.ariaLabel}
+                className="contact-chip"
               >
-                <FolderOpenDot strokeWidth={1.75} size={18} className="text-[hsl(var(--signal))] transition-colors group-hover:text-[hsl(var(--surface))]" aria-hidden />
-                Résumé
+                <Icon size={14} aria-hidden />
+                {profile.label}
               </a>
-              <span className="hidden font-mono text-xs text-[hsl(var(--muted-foreground))] sm:inline">
-                · shipping in prod at 3 am
-              </span>
-            </div>
-          </div>
-
-          <div className="relative mx-auto flex w-full max-w-[280px] flex-col items-center lg:max-w-none">
-            <div className="relative min-h-[260px] min-w-[260px] sm:min-h-[280px] sm:min-w-[280px]">
-              <div className="absolute -inset-3 rotate-3 rounded-[2rem] border-2 border-dashed border-[hsl(var(--ink)/0.25)]" aria-hidden />
-              <div className="relative rotate-2 overflow-hidden rounded-[1.75rem] border-4 border-[hsl(var(--ink))] bg-[hsl(var(--paper))] shadow-[12px_12px_0_hsl(var(--signal)/0.35)]">
-                <img
-                  src={HERO_PHOTO_WEBP_SM}
-                  srcSet={`${HERO_PHOTO_WEBP_SM} 320w, ${HERO_PHOTO_WEBP} 560w`}
-                  sizes="(max-width: 480px) 260px, 280px"
-                  alt={PROFILE_IMAGE_ALT}
-                  width={280}
-                  height={280}
-                  decoding="async"
-                  fetchPriority="high"
-                  className="aspect-square w-full max-w-[260px] object-cover sm:max-w-[280px]"
-                />
-              </div>
-              <div className="absolute -bottom-4 -right-2 max-w-[200px] rotate-[-2deg] rounded-xl border-2 border-[hsl(var(--ink))] bg-[hsl(var(--surface))] px-4 py-2 font-mono text-[10px] font-semibold uppercase leading-snug tracking-widest text-[hsl(var(--ink))] shadow-[4px_4px_0_hsl(var(--ink)/0.15)] sm:text-xs">
-                open to interesting infra problems
-              </div>
-            </div>
-          </div>
+            )
+          })}
+          <a href={`mailto:${CONTACT_EMAIL}`} className="contact-chip">
+            <Mail size={14} strokeWidth={1.75} aria-hidden />
+            {EMAIL_LABEL}
+          </a>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   )
 }
 

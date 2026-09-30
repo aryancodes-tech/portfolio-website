@@ -42,3 +42,5 @@ coverage
 
 # Accidental artifacts
 public/Untitled
+# Local design references (not deployed)
+design-references

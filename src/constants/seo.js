@@ -106,23 +106,26 @@ export const SAME_AS = [
 
 /**
  * Social profiles for the contact section (url + accessible label).
- * @type {readonly { url: string, ariaLabel: string, id: 'github' | 'linkedin' | 'x' }[]}
+ * @type {readonly { url: string, ariaLabel: string, label: string, id: 'github' | 'linkedin' | 'x' }[]}
  */
 export const SOCIAL_PROFILES = [
   {
     id: 'github',
     url: 'https://github.com/aryancodes-tech',
     ariaLabel: 'Aryan Gupta on GitHub',
+    label: 'GitHub',
   },
   {
     id: 'linkedin',
     url: 'https://linkedin.com/in/aryancodes-tech',
     ariaLabel: 'Aryan Gupta on LinkedIn',
+    label: 'LinkedIn',
   },
   {
     id: 'x',
     url: 'https://x.com/aryancodes_tech',
     ariaLabel: 'Aryan Gupta on X',
+    label: 'X',
   },
 ]
 
@@ -156,15 +159,14 @@ export const KNOWS_ABOUT = [
  * Hero tagline shown above the name (visible, keyword-aware).
  * @type {string}
  */
-export const HERO_KICKER =
-  'Backend Developer · Golang · System Design'
+export const HERO_KICKER = 'Backend engineer · Omniful AI'
 
 /**
  * Hero supporting paragraph (plain text for static LCP shell and meta).
  * @type {string}
  */
 export const HERO_SUMMARY_PLAIN =
-  'Backend engineer focused on scalable APIs, microservices, and distributed systems - from PostgreSQL internals to warehouse-scale workflows.'
+  'I work on warehouse software at Omniful. Most of what I ship never shows up in a screenshot: the search, the lock, and the path an order takes before it is packed.'
 
 /**
  * Accessible label for the profile image.

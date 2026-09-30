@@ -16,9 +16,9 @@ const CopyToClipboardButton = ({ content }) => {
       type="button"
       onClick={() => copyToClipboard(content)}
       aria-label={label}
-      className="flex flex-col items-center justify-center rounded-lg p-1 text-[hsl(var(--ink))] transition-colors hover:text-[hsl(var(--signal-deep))]"
+      className="inline-flex items-center justify-center rounded p-1 text-[hsl(var(--faint))] transition-colors hover:text-[hsl(var(--ink))]"
     >
-      {isCopied ? <FaCheckCircle aria-hidden /> : <FaRegCopy aria-hidden />}
+      {isCopied ? <FaCheckCircle size={12} aria-hidden /> : <FaRegCopy size={12} aria-hidden />}
     </button>
   )
 }

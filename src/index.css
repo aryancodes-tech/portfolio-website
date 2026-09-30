@@ -6,99 +6,104 @@
 
 @layer base {
   :root {
-    --ink: 222 47% 11%;
-    --paper: 40 18% 94%;
-    --surface: 40 25% 99%;
-    --signal: 22 90% 48%;
-    --signal-deep: 18 88% 38%;
-    --border: 35 14% 82%;
-    --grid-line: 220 14% 88%;
-    --background: 40 18% 94%;
-    --foreground: 222 47% 11%;
-    --card: 40 25% 99%;
-    --card-foreground: 222 47% 11%;
-    --primary: 222 47% 11%;
-    --primary-foreground: 40 25% 98%;
+    --paper: 0 0% 100%;
+    --surface: 40 8% 97%;
+    --ink: 24 10% 8%;
+    --muted-foreground: 24 6% 38%;
+    --faint: 24 5% 55%;
+    --border: 24 8% 88%;
+    --hairline: 24 8% 90%;
+    --signal: 142 48% 32%;
+    --banner: 24 10% 10%;
     --radius: 0.75rem;
-    --popover: 40 25% 99%;
-    --popover-foreground: 222 47% 11%;
-    --secondary: 38 18% 92%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 38 14% 91%;
-    --muted-foreground: 220 12% 32%;
-    --accent: 38 22% 91%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 72% 42%;
-    --destructive-foreground: 40 25% 98%;
-    --input: 35 14% 82%;
-    --ring: 22 90% 48%;
-    --chart-1: 22 90% 48%;
-    --chart-2: 200 45% 40%;
-    --chart-3: 280 35% 45%;
-    --chart-4: 45 85% 48%;
-    --chart-5: 340 70% 48%;
+    --background: 0 0% 100%;
+    --foreground: 24 10% 8%;
+    --card: 40 8% 97%;
+    --card-foreground: 24 10% 8%;
+    --primary: 24 10% 8%;
+    --primary-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 10% 8%;
+    --secondary: 40 8% 97%;
+    --secondary-foreground: 24 10% 8%;
+    --muted: 40 8% 97%;
+    --accent: 40 8% 97%;
+    --accent-foreground: 24 10% 8%;
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --input: 24 8% 88%;
+    --ring: 24 10% 8%;
   }
 
-  .content {
-    @apply mx-auto max-w-6xl w-full px-3 sm:px-5 md:w-[92%] lg:max-w-7xl;
+  .dark {
+    --paper: 0 0% 4%;
+    --surface: 30 6% 9%;
+    --ink: 36 20% 96%;
+    --muted-foreground: 30 8% 64%;
+    --faint: 30 6% 42%;
+    --border: 30 6% 16%;
+    --hairline: 30 5% 13%;
+    --signal: 142 42% 46%;
+    --banner: 30 8% 7%;
+    --background: 0 0% 4%;
+    --foreground: 36 20% 96%;
+    --card: 30 6% 9%;
+    --card-foreground: 36 20% 96%;
+    --primary: 36 20% 96%;
+    --primary-foreground: 0 0% 4%;
+    --popover: 30 6% 9%;
+    --popover-foreground: 36 20% 96%;
+    --secondary: 30 6% 9%;
+    --secondary-foreground: 36 20% 96%;
+    --muted: 30 6% 9%;
+    --accent: 30 6% 9%;
+    --accent-foreground: 36 20% 96%;
+    --destructive: 0 62% 52%;
+    --destructive-foreground: 36 20% 96%;
+    --input: 30 6% 16%;
+    --ring: 36 20% 96%;
+  }
+
+  .page-rail {
+    @apply mx-auto min-h-screen w-full max-w-[46rem] border-x border-[hsl(var(--hairline))];
+  }
+
+  .content,
+  .pad {
+    @apply px-5 sm:px-8;
   }
 
   .site-shell {
     @apply relative min-h-screen;
   }
-
-  .site-shell::before {
-    content: "";
-    pointer-events: none;
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    opacity: 0.45;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-  }
-
-  .site-shell > * {
-    position: relative;
-    z-index: 1;
-  }
 }
 
 body {
+  margin: 0;
   background-color: hsl(var(--paper));
-  background-image:
-    linear-gradient(
-      165deg,
-      hsl(var(--paper)) 0%,
-      hsl(38 22% 91%) 45%,
-      hsl(200 12% 92%) 100%
-    );
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  font-family: "Gilroy", "Syne", system-ui, sans-serif;
+  color: hsl(var(--ink));
+  font-family: "Gilroy", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.65;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+b,
+strong {
+  font-family: "Syne", system-ui, sans-serif;
+  font-weight: 600;
   color: hsl(var(--ink));
 }
 
-.svg-icon {
-  width: 45.5px;
-  height: 33.5px;
-}
-
-@media (max-width: 768px) {
-  .svg-icon {
-    width: 30px;
-    height: 22px;
-  }
-}
-
 *::selection {
-  background: hsl(var(--signal-deep));
-  color: hsl(40 25% 99%);
+  background: hsl(var(--ink));
+  color: hsl(var(--paper));
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -107,75 +112,79 @@ html {
   }
 }
 
-@keyframes nav-in {
-  from {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @layer utilities {
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-2.5 py-1 font-mono text-[11px] leading-none text-[hsl(var(--muted-foreground))];
+  }
+
+  .contact-chip {
+    @apply inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-3.5 py-2 text-[13px] text-[hsl(var(--ink))] no-underline transition-colors hover:bg-[hsl(var(--ink))] hover:text-[hsl(var(--paper))];
+  }
+
+  .rule {
+    @apply border-t border-[hsl(var(--hairline))];
+  }
+
+  .meta {
+    @apply font-mono text-[11px] tracking-wide text-[hsl(var(--faint))];
+  }
+
+  .link-quiet {
+    @apply text-[hsl(var(--muted-foreground))] no-underline transition-colors hover:text-[hsl(var(--ink))];
+  }
+
+  .link-inline {
+    @apply text-[hsl(var(--ink))] underline decoration-[hsl(var(--border))] decoration-1 underline-offset-[3px] transition-colors hover:decoration-[hsl(var(--ink))];
+  }
+
   .surface-card {
-    @apply rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[6px_6px_0_hsl(var(--ink)/0.08)] transition-shadow duration-300;
+    @apply overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))];
   }
 
-  .surface-card:hover {
-    @apply shadow-[8px_8px_0_hsl(var(--signal)/0.22)];
-  }
-
-  .pill-signal {
-    @apply inline-flex items-center rounded-full bg-[hsl(var(--ink))] px-4 py-1 text-sm font-semibold text-[hsl(var(--surface))] shadow-[3px_3px_0_hsl(var(--signal)/0.55)];
-  }
-
-  .chip-tech {
-    @apply rounded-lg border border-border bg-paper px-3 py-1 font-mono text-xs font-medium text-muted-foreground transition-colors hover:border-signal-deep hover:text-ink;
-  }
-
-  .link-external {
-    @apply text-[hsl(var(--signal-deep))] underline decoration-dotted underline-offset-4 transition-colors hover:text-[hsl(var(--ink))];
-  }
-
-  .hero-grid-bg {
+  .hero-banner {
+    background-color: hsl(var(--banner));
     background-image:
-      linear-gradient(
-        hsl(var(--grid-line)) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        90deg,
-        hsl(var(--grid-line)) 1px,
-        transparent 1px
-      );
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 20%, transparent 75%);
+      radial-gradient(ellipse 70% 90% at 18% 80%, hsl(16 40% 28% / 0.35), transparent 55%),
+      radial-gradient(ellipse 50% 70% at 86% 20%, hsl(200 30% 28% / 0.22), transparent 50%),
+      linear-gradient(hsl(var(--hairline)) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--hairline)) 1px, transparent 1px);
+    background-size: auto, auto, 32px 32px, 32px 32px;
   }
 }
 
-.wrapper {
-  max-width: 100%;
-  overflow: hidden;
+.summary-reset {
+  list-style: none;
+  scroll-margin-top: 4.5rem;
 }
 
-.marquee {
-  white-space: nowrap;
-  overflow: hidden;
-  display: inline-block;
-  animation: marquee 15s linear infinite;
+.summary-reset::-webkit-details-marker {
+  display: none;
 }
 
-.marquee p {
-  display: inline-block;
+.disclosure .disclosure-open {
+  display: none;
 }
 
-@keyframes marquee {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-50%, 0, 0);
-  }
+.disclosure[open] .disclosure-closed {
+  display: none;
+}
+
+.disclosure[open] .disclosure-open {
+  display: inline-flex;
+}
+
+.disclosure[open] .disclosure-chevron {
+  transform: rotate(180deg);
+}
+
+.disclosure-chevron {
+  transition: transform 0.18s ease;
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid hsl(var(--ink));
+  outline-offset: 2px;
+  border-radius: 4px;
 }

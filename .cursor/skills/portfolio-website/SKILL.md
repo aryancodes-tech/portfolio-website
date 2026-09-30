@@ -40,9 +40,9 @@ Portfolio-Website/
 
 ## Do-not-break list
 
-1. **Colors** — only `hsl(var(--*))` tokens from `index.css`
+1. **Colors** — only `hsl(var(--*))` tokens from `index.css` (dark default + `.light` via missing `.dark`)
 2. **Copy** — visible marketing text unchanged unless user requests
-3. **Layout** — section order in `Home.jsx` and Tailwind class strings on cards
+3. **Layout** — `SiteFrame` lined rail; Home order: cover/hero, about, contact, work, stack, project cards, folded education, folded achievements, footer
 4. **LCP** — hero WebP, preloads, static shell in `index.html` (via sync script)
 
 ## Workflows

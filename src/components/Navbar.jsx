@@ -1,131 +1,91 @@
-import { useState, useEffect, useRef } from 'react'
-import { Menu } from 'lucide-react'
+import { useState } from 'react'
+import { Menu, X } from 'lucide-react'
+import ThemeToggle from './ThemeToggle'
+import SiteMark from './SiteMark'
+import { SHOW_WRITING_LINK } from '../constants/features'
+import { PERSON_NAME } from '../constants/seo'
+import { HOME_PATH, RESUME_PATH, WRITING_PATH } from '../constants/urls'
+import {
+  MENU_CLOSE_LABEL,
+  MENU_LABEL,
+  PROJECTS_HREF,
+  PROJECTS_NAV_LABEL,
+  RESUME_LABEL,
+  STACK_HREF,
+  STACK_NAV_LABEL,
+  WORK_HREF,
+  WORK_NAV_LABEL,
+  WRITING_NAV_LABEL,
+} from '../constants/copy'
 
-/** Primary in-page nav targets (crawlable hash links). */
+/** In-page links. Notes is included only while {@link SHOW_WRITING_LINK} is true. */
 const NAV_LINKS = [
-  { href: '#education', label: 'Education' },
-  { href: '#experience', label: 'Experience' },
-  { href: '#projects', label: 'Projects' },
-  { href: '#contactme', label: 'Contact', isCta: true },
+  { href: WORK_HREF, label: WORK_NAV_LABEL },
+  { href: STACK_HREF, label: STACK_NAV_LABEL },
+  { href: PROJECTS_HREF, label: PROJECTS_NAV_LABEL },
+  ...(SHOW_WRITING_LINK ? [{ href: WRITING_PATH, label: WRITING_NAV_LABEL }] : []),
+  { href: RESUME_PATH, label: RESUME_LABEL },
 ]
 
-const linkClass =
-  'font-mono text-[11px] tracking-[0.12em] uppercase text-[hsl(var(--ink))] transition-colors hover:text-[hsl(var(--signal-deep))]'
+const linkClass = 'link-quiet text-[13px]'
 
-const contactCtaClass =
-  'inline-block rounded-xl bg-[hsl(var(--ink))] px-4 py-2 font-mono text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--surface))] no-underline shadow-[4px_4px_0_hsl(var(--signal))] transition-transform hover:-translate-y-0.5'
-
+/** Slim sticky header: mark on the left, section links and the theme switch on the right. */
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const menuRef = useRef(null)
-  const buttonRef = useRef(null)
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target)
-      ) {
-        setIsOpen(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
-
-  const handleMenuClick = () => {
-    setIsOpen((prev) => !prev)
-  }
-
-  const handleLinkClick = () => {
+  const closeMenu = () => {
     setIsOpen(false)
   }
 
-  const desktopNavLinks = NAV_LINKS.filter((link) => !link.isCta)
-  const contactLink = NAV_LINKS.find((link) => link.isCta)
-
   return (
-    <header className="sticky top-0 z-50 px-3 pt-4 pb-2 sm:px-5 animate-[nav-in_0.4s_ease-out]">
-      <div className="content flex flex-row items-center justify-between gap-4 rounded-2xl border-2 border-[hsl(var(--ink))] bg-[hsl(var(--surface))]/95 px-4 py-3 shadow-[6px_6px_0_hsl(var(--signal)/0.25)] backdrop-blur-md md:px-6">
-        <a href="#" className="flex min-w-0 items-center gap-3 no-underline" aria-label="Aryan Gupta — home">
-          <img
-            src="/ag_black.svg"
-            className="h-11 w-11 shrink-0 rounded-xl border-2 border-[hsl(var(--ink))] bg-[hsl(var(--paper))] p-1.5"
-            alt=""
-            width={44}
-            height={44}
-          />
-          <div className="flex min-w-0 flex-col leading-none">
-            <span className="font-display truncate text-lg font-bold tracking-tight text-[hsl(var(--ink))] sm:text-xl">Aryan Gupta</span>
-            <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-[hsl(var(--muted-foreground))]">
-              portfolio
-            </span>
-          </div>
+    <header className="sticky top-0 z-40 border-b border-[hsl(var(--hairline))] bg-[hsl(var(--paper)/0.86)] backdrop-blur-md">
+      <div className="pad flex h-14 items-center justify-between gap-4">
+        <a
+          href={HOME_PATH}
+          className="flex items-center gap-2 text-[hsl(var(--ink))] no-underline"
+          aria-label={`${PERSON_NAME} — home`}
+        >
+          <SiteMark />
+          <span className="font-display text-[14px] font-semibold tracking-tight">{PERSON_NAME}</span>
         </a>
 
-        <div className="relative shrink-0 lg:hidden">
-          <button
-            ref={buttonRef}
-            type="button"
-            onClick={handleMenuClick}
-            className="rounded-lg border-2 border-[hsl(var(--ink))] bg-[hsl(var(--paper))] p-2 text-[hsl(var(--ink))] transition-colors hover:bg-[hsl(var(--signal)/0.12)]"
-            aria-expanded={isOpen}
-            aria-controls="mobile-nav-menu"
-            aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          >
-            <Menu size={22} strokeWidth={2} aria-hidden />
-          </button>
-
-          {isOpen && (
-            <div
-              id="mobile-nav-menu"
-              ref={menuRef}
-              role="navigation"
-              aria-label="Mobile"
-              className="absolute right-0 top-full z-30 mt-2 w-[min(280px,calc(100vw-1.5rem))] origin-top-right rounded-2xl border-2 border-[hsl(var(--ink))] bg-[hsl(var(--surface))] p-4 shadow-[8px_8px_0_hsl(var(--ink)/0.12)]"
-            >
-              <ul className="flex flex-col gap-3 text-center">
-                {NAV_LINKS.map(({ href, label }) => (
-                  <li key={href}>
-                    <a href={href} className={linkClass} onClick={handleLinkClick}>
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        <nav className="hidden lg:block" aria-label="Primary">
-          <ul className="flex flex-row flex-wrap items-center gap-x-1 gap-y-2">
-            {desktopNavLinks.map(({ href, label }, index) => (
-              <li key={href} className="flex items-center">
-                {index > 0 && (
-                  <span className="px-2 font-mono text-[hsl(var(--border))]" aria-hidden>
-                    ·
-                  </span>
-                )}
-                <a href={href} className={linkClass}>
-                  {label}
-                </a>
-              </li>
-            ))}
-            {contactLink && (
-              <li className="pl-6">
-                <a href={contactLink.href} className={contactCtaClass}>
-                  {contactLink.label}
-                </a>
-              </li>
-            )}
-          </ul>
+        <nav className="hidden items-center gap-5 sm:flex" aria-label="Primary">
+          {NAV_LINKS.map((link) => (
+            <a key={link.href} href={link.href} className={linkClass}>
+              {link.label}
+            </a>
+          ))}
+          <ThemeToggle />
         </nav>
+
+        <div className="flex items-center gap-1 sm:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-[hsl(var(--muted-foreground))]"
+            aria-expanded={isOpen}
+            aria-controls="site-menu"
+            aria-label={isOpen ? MENU_CLOSE_LABEL : MENU_LABEL}
+            onClick={() => setIsOpen((open) => !open)}
+          >
+            {isOpen ? <X size={16} strokeWidth={1.75} aria-hidden /> : <Menu size={16} strokeWidth={1.75} aria-hidden />}
+          </button>
+        </div>
       </div>
+
+      {isOpen && (
+        <nav
+          id="site-menu"
+          className="pad flex flex-col gap-3 border-t border-[hsl(var(--hairline))] py-4 sm:hidden"
+          aria-label="Mobile"
+        >
+          {NAV_LINKS.map((link) => (
+            <a key={link.href} href={link.href} className={linkClass} onClick={closeMenu}>
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      )}
     </header>
   )
 }

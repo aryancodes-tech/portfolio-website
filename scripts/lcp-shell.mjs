@@ -1,97 +1,82 @@
 /**
  * Critical CSS and static HTML for first paint / LCP before React hydrates.
  * Injected by scripts/sync-seo.mjs between LCP markers in index.html.
+ *
+ * Mirrors the cover + overlapping portrait in HeroSection.jsx.
  */
 
 /** @type {string} */
 export const LCP_CRITICAL_CSS = `    :root {
-      --ink: 222 47% 11%;
-      --paper: 40 18% 94%;
-      --surface: 40 25% 99%;
-      --signal-deep: 18 88% 38%;
-      --muted-fg: 220 12% 32%;
+      --paper: 0 0% 100%;
+      --ink: 24 10% 8%;
+      --muted-fg: 24 6% 38%;
+      --hairline: 24 8% 90%;
+      --banner: 24 10% 10%;
+    }
+    html.dark {
+      --paper: 0 0% 4%;
+      --ink: 36 20% 96%;
+      --muted-fg: 30 8% 64%;
+      --hairline: 30 5% 13%;
+      --banner: 30 8% 7%;
     }
     body {
       margin: 0;
-      background-color: hsl(var(--paper));
-      background-image: linear-gradient(165deg, hsl(var(--paper)) 0%, hsl(38 22% 91%) 45%, hsl(200 12% 92%) 100%);
+      background: hsl(var(--paper));
       color: hsl(var(--ink));
-      font-family: "Gilroy", "Syne", system-ui, sans-serif;
+      font-family: "Gilroy", system-ui, sans-serif;
     }
-    #static-lcp {
+    .static-rail {
       box-sizing: border-box;
-      max-width: 80rem;
+      max-width: 46rem;
+      min-height: 100vh;
       margin: 0 auto;
-      padding: 1.5rem 0.75rem 2rem;
-      width: 100%;
+      border-left: 1px solid hsl(var(--hairline));
+      border-right: 1px solid hsl(var(--hairline));
     }
-    .static-hero-card {
-      box-sizing: border-box;
-      border: 2px solid hsl(var(--ink));
-      border-radius: 2rem;
-      background: hsl(var(--surface));
-      padding: 1.5rem;
+    .static-bar {
+      height: 3.5rem;
+      border-bottom: 1px solid hsl(var(--hairline));
     }
-    .static-kicker {
-      display: none;
-      margin: 0 0 1rem;
-      font-family: "IBM Plex Mono", ui-monospace, monospace;
-      font-size: 11px;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: hsl(var(--signal-deep));
+    .static-banner {
+      height: 10rem;
+      background:
+        radial-gradient(ellipse 70% 90% at 18% 80%, rgba(120, 70, 40, 0.35), transparent 55%),
+        radial-gradient(ellipse 50% 70% at 86% 20%, rgba(40, 70, 90, 0.22), transparent 50%),
+        hsl(var(--banner));
     }
-    @media (min-width: 768px) {
-      .static-kicker {
-        display: block;
-      }
-    }
-    .static-title {
-      margin: 0 0 1rem;
-      font-family: "Syne", sans-serif;
-      font-size: clamp(2.1rem, 5vw, 4.25rem);
-      font-weight: 800;
-      line-height: 1.05;
-      letter-spacing: -0.02em;
-    }
-    .static-summary {
-      margin: 0 0 1.5rem;
-      max-width: 36rem;
-      font-family: "Gilroy", sans-serif;
-      font-size: 1.125rem;
-      line-height: 1.625;
-      color: hsl(var(--muted-fg));
-    }
-    .static-photo-wrap {
-      display: flex;
-      justify-content: center;
-      margin-top: 0.5rem;
+    .static-id {
+      padding: 0 1.25rem;
     }
     .static-photo {
-      width: 100%;
-      max-width: 260px;
-      aspect-ratio: 1;
+      display: block;
+      width: 4.5rem;
+      height: 4.5rem;
+      margin-top: -2.5rem;
+      border-radius: 9999px;
       object-fit: cover;
-      border: 4px solid hsl(var(--ink));
-      border-radius: 1.75rem;
-      background: hsl(var(--paper));
+      box-shadow: 0 0 0 4px hsl(var(--paper));
+    }
+    .static-name {
+      margin: 1.25rem 0 0;
+      font-family: "Syne", system-ui, sans-serif;
+      font-size: 1.65rem;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .static-role {
+      margin: 0.5rem 0 0;
+      font-size: 13.5px;
+      color: hsl(var(--muted-fg));
     }
     body.app-mounted #static-lcp {
       display: none;
     }
-    @media (min-width: 1024px) {
-      .static-hero-inner {
-        display: grid;
-        grid-template-columns: 1.15fr 0.85fr;
-        gap: 3rem;
-        align-items: center;
-      }
-      .static-photo-wrap {
-        margin-top: 0;
-      }
-      .static-photo {
-        max-width: 280px;
-      }
+    @media (min-width: 640px) {
+      .static-banner { height: 12rem; }
+      .static-id { padding: 0 2rem; }
+      .static-photo { width: 5.5rem; height: 5.5rem; margin-top: -3rem; }
     }`
 
 /**
@@ -106,31 +91,28 @@ export const LCP_CRITICAL_CSS = `    :root {
  * @returns {string}
  */
 export function buildLcpShellHtml(opts) {
-  const { kicker, name, summary, imageAlt, imageSm, imageLg } = opts
-  return `    <div id="static-lcp" class="static-lcp">
-      <main class="static-main">
-        <section class="static-hero-card" aria-label="${name} — Backend Developer and Software Engineer">
-          <div class="static-hero-inner">
-            <div>
-              <p class="static-kicker">${kicker}</p>
-              <h1 class="static-title">${name}</h1>
-              <p class="static-summary">${summary}</p>
-            </div>
-            <div class="static-photo-wrap">
-              <img
-                class="static-photo"
-                src="${imageSm}"
-                srcset="${imageSm} 320w, ${imageLg} 560w"
-                sizes="(max-width: 480px) 260px, 280px"
-                alt="${imageAlt}"
-                width="280"
-                height="280"
-                fetchpriority="high"
-                decoding="async"
-              />
-            </div>
+  const { kicker, name, imageAlt, imageSm, imageLg } = opts
+  return `    <div id="static-lcp">
+      <div class="static-rail">
+        <div class="static-bar"></div>
+        <section aria-label="${name}, backend engineer">
+          <div class="static-banner"></div>
+          <div class="static-id">
+            <img
+              class="static-photo"
+              src="${imageSm}"
+              srcset="${imageSm} 320w, ${imageLg} 560w"
+              sizes="88px"
+              alt="${imageAlt}"
+              width="88"
+              height="88"
+              fetchpriority="high"
+              decoding="async"
+            />
+            <h1 class="static-name">${name}</h1>
+            <p class="static-role">${kicker}</p>
           </div>
         </section>
-      </main>
+      </div>
     </div>`
 }

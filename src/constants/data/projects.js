@@ -1,26 +1,43 @@
-/** Project card entries for the Projects section. */
+import {
+  PROJECT_IMAGE_MYMEMOS,
+  PROJECT_IMAGE_PLACEMENTBUDDY,
+  PROJECT_IMAGE_WIDGETWALL,
+} from '../assets'
+
+/**
+ * Side projects. Kept short on purpose: the portfolio leads with backend work.
+ * @type {readonly {
+ *   name: string,
+ *   description: string,
+ *   externalLink: string,
+ *   githubLink: string,
+ *   note: string,
+ *   image: string,
+ * }[]}
+ */
 export const projectsData = [
   {
-    source: '/project_logos/placementbuddy.svg',
-    imgPreview: '/project_images/placementbuddy.jpg',
-    name: "PlacementBuddy - JIIT's Placement Data",
-    description:
-      'Access and analyze the past 2 years of placement data with advanced sorting, filtering, and interactive features.',
+    name: 'MyMemos',
+    description: 'Notes on every new tab. Local-first, no account, and nothing leaves the browser.',
+    externalLink: 'https://mymemos.in/',
     githubLink: '',
-    externalLink: 'https://placementbuddy.aryancodes.tech/',
-    externalLinkText: 'placementbuddy.aryancodes.tech',
-    wonHackathon: false,
-    isSaaS: true,
+    note: 'Extension',
+    image: PROJECT_IMAGE_MYMEMOS,
   },
   {
-    source: '/project_logos/widgetwall.png',
-    imgPreview: '/project_images/widgetwall.jpg',
-    name: 'WidgetWall - Chrome Extension',
-    description:
-      'Browser extension for streamlined task management, time tracking, and productivity enhancement',
-    githubLink: 'https://github.com/aryancodes-tech/WidgetWall-Chrome-Extension',
+    name: 'PlacementBuddy',
+    description: 'JIIT placement records from the past two years, with sorting and filters.',
+    externalLink: 'https://placementbuddy.aryancodes.tech/',
+    githubLink: '',
+    note: 'Web',
+    image: PROJECT_IMAGE_PLACEMENTBUDDY,
+  },
+  {
+    name: 'WidgetWall',
+    description: 'A Chrome extension for tasks and time tracking.',
     externalLink: 'https://widgetwall.aryancodes.tech',
-    externalLinkText: 'widgetwall.aryancodes.tech',
-    wonHackathon: true,
+    githubLink: 'https://github.com/aryancodes-tech/WidgetWall-Chrome-Extension',
+    note: 'Extension',
+    image: PROJECT_IMAGE_WIDGETWALL,
   },
 ]

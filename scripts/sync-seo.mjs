@@ -24,6 +24,7 @@ import {
   buildStructuredDataGraph,
 } from '../src/constants/seo.js'
 import { HERO_PHOTO_WEBP, HERO_PHOTO_WEBP_SM } from '../src/constants/assets.js'
+import { THEME_BOOTSTRAP_SCRIPT } from '../src/constants/theme.js'
 import { LCP_CRITICAL_CSS, buildLcpShellHtml } from './lcp-shell.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -35,7 +36,8 @@ const jsonLd = JSON.stringify(buildStructuredDataGraph(), null, 2)
   .map((line) => `      ${line}`)
   .join('\n')
 
-const headBlock = `    <link rel="icon" type="image/svg+xml" href="/ag_black.svg"/>
+const headBlock = `    <script>${THEME_BOOTSTRAP_SCRIPT}</script>
+    <link rel="icon" type="image/svg+xml" href="/mark.svg"/>
     <link rel="canonical" href="${canonicalUrl}" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,7 +45,8 @@ const headBlock = `    <link rel="icon" type="image/svg+xml" href="/ag_black.svg
     <meta name="keywords" content="${META_KEYWORDS}" />
     <meta name="author" content="${PERSON_NAME}" />
     <meta name="google-site-verification" content="googleb40b905bc3926bb8.html" />
-    <meta name="theme-color" content="#ebe8e1" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta property="og:locale" content="en_IN" />
     <meta property="og:type" content="profile" />
     <meta property="profile:username" content="aryancodes-tech" />
@@ -65,8 +68,7 @@ const headBlock = `    <link rel="icon" type="image/svg+xml" href="/ag_black.svg
     <meta name="twitter:image:alt" content="${OG_IMAGE_ALT}" />
     <meta name="twitter:creator" content="@aryancodes_tech" />
     <link rel="image_src" href="${OG_IMAGE_URL}" />
-    <link rel="preload" href="${HERO_PHOTO_WEBP_SM}" as="image" type="image/webp" fetchpriority="high" media="(max-width: 480px)" />
-    <link rel="preload" href="${HERO_PHOTO_WEBP}" as="image" type="image/webp" fetchpriority="high" media="(min-width: 481px)" />
+    <link rel="preload" href="${HERO_PHOTO_WEBP_SM}" as="image" type="image/webp" fetchpriority="high" />
     <title>${META_TITLE}</title>
     <script type="application/ld+json">
 ${jsonLd}

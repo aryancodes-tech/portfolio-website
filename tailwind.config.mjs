@@ -9,6 +9,7 @@ export default {
   	extend: {
   		fontFamily: {
   			display: ['Syne', 'system-ui', 'sans-serif'],
+  			sans: ['Gilroy', 'system-ui', 'sans-serif'],
   			mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
   		},
   		borderRadius: {
@@ -21,7 +22,8 @@ export default {
   			paper: 'hsl(var(--paper))',
   			surface: 'hsl(var(--surface))',
   			signal: 'hsl(var(--signal))',
-  			'signal-deep': 'hsl(var(--signal-deep))',
+  			faint: 'hsl(var(--faint))',
+  			hairline: 'hsl(var(--hairline))',
   			border: 'hsl(var(--border))',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
